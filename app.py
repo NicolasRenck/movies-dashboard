@@ -99,7 +99,7 @@ if df.empty:
 # =====================
 # 🔹 SIDEBAR – FILTROS
 # =====================
-st.sidebar.header("🎛️ Filtros")
+st.sidebar.header("Filtros")
 
 # Lógica de Ano (Aprimorada para robustez)
 year_col = 'release_year'
@@ -163,7 +163,7 @@ if votes_col in filtered_df.columns:
 # =====================
 # 🔹 TÍTULO E INTRODUÇÃO
 # =====================
-st.title("🎬 Movies Dashboard")
+st.title("Movies Dashboard")
 
 st.markdown(
     "Este painel permite visualizar dados de filmes, como notas, votos e gêneros. "
@@ -176,7 +176,7 @@ st.markdown("---")
 
 # Verifica se o DataFrame filtrado está vazio
 if filtered_df.empty:
-    st.warning("⚠️ **Nenhum filme encontrado** com os filtros selecionados. Tente ajustar o ano, gênero ou número de votos.")
+    st.warning("**Nenhum filme encontrado** com os filtros selecionados. Tente ajustar o ano, gênero ou número de votos.")
     st.stop() # Para a execução aqui se não houver dados
 
 
@@ -218,7 +218,7 @@ with col1:
         if not avg_rating.empty:
             fig_line = px.line(
                 avg_rating, x=year_col, y='rating',
-                title="⭐ Média de notas por ano",
+                title="Média de notas por ano",
                 labels={year_col: 'Ano de Lançamento', 'rating': 'Média de Nota'},
                 height=400 # Altura fixa para melhor layout
             )
@@ -253,7 +253,7 @@ with col2:
                 fig_bar = px.bar(
                     genre_rating, x='rating', y='genres_list',
                     orientation='h',
-                    title="🎭 Top 10 Gêneros por Nota Média",
+                    title=" Top 10 Gêneros por Nota Média",
                     labels={'rating': 'Média de Nota', 'genres_list': 'Gênero'},
                     height=400 
                 )
