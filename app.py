@@ -122,7 +122,7 @@ year_range = st.sidebar.slider(
 genres = sorted(set([g for sublist in df['genres_list'] for g in sublist if g]))
 selected_genres = st.sidebar.multiselect("Gêneros", genres)
 
-# Lógica de Votos (Aprimorada para robustez)
+
 votes_col = 'votes'
 if votes_col in df.columns:
     min_votes = int(df[votes_col].min(skipna=True))
@@ -137,12 +137,10 @@ vote_range = st.sidebar.slider(
     value=(min_votes, max_votes)
 )
 
-# =====================
-# 🔹 FILTRAR DADOS
-# =====================
+#filtrar dados
 filtered_df = df.copy()
 
-# Aplicação dos filtros
+#aplicação dos filtros
 if year_col in filtered_df.columns:
     filtered_df = filtered_df[
         (filtered_df[year_col] >= year_range[0]) &
@@ -160,9 +158,7 @@ if votes_col in filtered_df.columns:
         (filtered_df[votes_col] <= vote_range[1])
     ]
 
-# =====================
-# 🔹 TÍTULO E INTRODUÇÃO
-# =====================
+#titulo
 st.title("Movies Dashboard")
 
 st.markdown(
@@ -172,12 +168,12 @@ st.markdown(
 
 st.markdown("---")
 
-## 2. Indicadores Chave (KPIs)
 
-# Verifica se o DataFrame filtrado está vazio
+
+# Verifica se o dataframe esta vazio
 if filtered_df.empty:
     st.warning("**Nenhum filme encontrado** com os filtros selecionados. Tente ajustar o ano, gênero ou número de votos.")
-    st.stop() # Para a execução aqui se não houver dados
+    st.stop() 
 
 
 total_filmes = len(filtered_df)
@@ -198,31 +194,29 @@ with col_kpi3:
 st.markdown("---")
 
 
-# =====================
-# 🔹 GRÁFICOS
-# =====================
+#graficos
 col1, col2 = st.columns(2)
 
-# Gráfico 1: Média de Notas por Ano
+# Graficos1
 with col1:
     st.subheader("Tendência de Notas ao Longo do Tempo")
     if year_col in filtered_df.columns and 'rating' in filtered_df.columns:
-        # Garante que os dados do gráfico não são NaN
+        
         avg_rating = (
             filtered_df.groupby(year_col)['rating']
             .mean()
             .reset_index()
             .sort_values(year_col)
-            .dropna(subset=['rating']) # Remove anos sem nota
+            .dropna(subset=['rating']) 
         )
         if not avg_rating.empty:
             fig_line = px.line(
                 avg_rating, x=year_col, y='rating',
                 title="Média de notas por ano",
                 labels={year_col: 'Ano de Lançamento', 'rating': 'Média de Nota'},
-                height=400 # Altura fixa para melhor layout
+                height=400 
             )
-            # Adiciona uma linha suave e marcadores
+            
             fig_line.update_traces(mode='lines+markers')
             st.plotly_chart(fig_line, use_container_width=True)
         else:
@@ -232,24 +226,24 @@ with col1:
 with col2:
     st.subheader("Ranking de Gêneros")
     if 'genres_list' in filtered_df.columns and 'rating' in filtered_df.columns:
-        # Remove linhas onde a lista de gêneros está vazia
+        # Remove linhas onde a lista de generos esta vazia
         temp_df = filtered_df[filtered_df['genres_list'].apply(bool)].copy()
         
         if not temp_df.empty:
-            # Explode a lista de gêneros para uma linha por gênero/filme
+            # Explode a lista de generos para uma linha por genero/filme
             genres_df = temp_df.explode('genres_list')
             
-            # Calcula a média de notas por gênero
+            # Calcula a media de notas por gênero
             genre_rating = (
                 genres_df.groupby('genres_list')['rating']
                 .mean()
                 .reset_index()
                 .sort_values('rating', ascending=False)
-                .head(10)  # Top 10 gêneros por nota média
+                .head(10)  # Top 10 generos por nota média
             )
             
             if not genre_rating.empty:
-                # Cria e exibe o gráfico de barras
+                
                 fig_bar = px.bar(
                     genre_rating, x='rating', y='genres_list',
                     orientation='h',
@@ -257,7 +251,7 @@ with col2:
                     labels={'rating': 'Média de Nota', 'genres_list': 'Gênero'},
                     height=400 
                 )
-                # Inverte o eixo Y para o maior valor no topo
+                
                 fig_bar.update_layout(yaxis={'categoryorder':'total ascending'})
                 st.plotly_chart(fig_bar, use_container_width=True)
             else:
